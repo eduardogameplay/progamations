@@ -1,55 +1,45 @@
-import requests
-from bs4 import BeautifulSoup
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melhores PCs Custo-Benefício 2024</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Melhores PCs Custo-Benefício 2024</h2>
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Loja</th>
+                    <th>Nome</th>
+                    <th>Preço</th>
+                    <th>Link</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-pcs"></tbody>
+        </table>
+    </div>
 
-# URLs das lojas
-URLS = {
-    "Amazon": "https://www.amazon.com.br/s?k=pc+gamer",
-    "Mercado Livre": "https://lista.mercadolivre.com.br/pc-gamer"
-}
-
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-}
-
-def obter_precos(url):
-    """ Faz scraping da loja e retorna uma lista de PCs e preços. """
-    try:
-        response = requests.get(url, headers=HEADERS, timeout=10)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        produtos = []
-
-        if "amazon" in url:
-            items = soup.find_all("div", {"data-component-type": "s-search-result"})
-            for item in items[:5]:  
-                titulo = item.find("span", class_="a-text-normal")
-                preco = item.find("span", class_="a-price-whole")
-                if titulo and preco:
-                    produtos.append((titulo.text.strip(), f"R${preco.text.strip()}"))
-
-        elif "mercadolivre" in url:
-            items = soup.find_all("div", class_="ui-search-result")
-            for item in items[:5]:  
-                titulo = item.find("h2", class_="ui-search-item__title")
-                preco = item.find("span", class_="price-tag-fraction")
-                if titulo and preco:
-                    produtos.append((titulo.text.strip(), f"R${preco.text.strip()}"))
-
-        return produtos
-
-    except requests.exceptions.RequestException as e:
-        print(f"Erro ao acessar {url}: {e}")
-        return []
-
-def buscar_todos():
-    """ Busca os produtos de todas as lojas. """
-    dados = []
-    for loja, url in URLS.items():
-        produtos = obter_precos(url)
-        for nome, preco in produtos:
-            dados.append([loja, nome, preco, url])
-    return dados
-
-if __name__ == "__main__":
-    print(buscar_todos())
+    <script>
+        $(document).ready(function() {
+            $.getJSON("dados.json", function(data) {
+                let conteudo = "";
+                data.forEach(pc => {
+                    conteudo += `
+                        <tr>
+                            <td>${pc.Loja}</td>
+                            <td>${pc.Nome}</td>
+                            <td>${pc.Preço}</td>
+                            <td><a href="${pc.Link}" target="_blank">Ver oferta</a></td>
+                        </tr>
+                    `;
+                });
+                $("#tabela-pcs").html(conteudo);
+            });
+        });
+    </script>
+</body>
+</html>

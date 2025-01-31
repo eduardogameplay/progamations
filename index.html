@@ -1,36 +1,36 @@
-import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-# URLs dos sites onde buscar as promoções
+# URLs das lojas
 URLS = {
     "Amazon": "https://www.amazon.com.br/s?k=pc+gamer",
     "Mercado Livre": "https://lista.mercadolivre.com.br/pc-gamer"
 }
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+}
+
 def obter_precos(url):
-    """ Faz scraping do site e retorna uma lista de PCs e preços """
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-    }
+    """ Faz scraping da loja e retorna uma lista de PCs e preços. """
     try:
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=HEADERS, timeout=10)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
 
         produtos = []
-        
+
         if "amazon" in url:
             items = soup.find_all("div", {"data-component-type": "s-search-result"})
-            for item in items[:5]:  # Pegamos os 5 primeiros produtos
+            for item in items[:5]:  
                 titulo = item.find("span", class_="a-text-normal")
                 preco = item.find("span", class_="a-price-whole")
                 if titulo and preco:
                     produtos.append((titulo.text.strip(), f"R${preco.text.strip()}"))
-        
+
         elif "mercadolivre" in url:
             items = soup.find_all("div", class_="ui-search-result")
-            for item in items[:5]:  # Pegamos os 5 primeiros produtos
+            for item in items[:5]:  
                 titulo = item.find("h2", class_="ui-search-item__title")
                 preco = item.find("span", class_="price-tag-fraction")
                 if titulo and preco:
@@ -42,18 +42,14 @@ def obter_precos(url):
         print(f"Erro ao acessar {url}: {e}")
         return []
 
-def criar_planilha():
-    """ Cria a planilha Excel com os melhores PCs custo-benefício """
+def buscar_todos():
+    """ Busca os produtos de todas as lojas. """
     dados = []
-    
     for loja, url in URLS.items():
         produtos = obter_precos(url)
         for nome, preco in produtos:
             dados.append([loja, nome, preco, url])
-
-    df = pd.DataFrame(dados, columns=["Loja", "Nome", "Preço", "Link"])
-    df.to_excel("Melhores_PCs_2024.xlsx", index=False)
-    print("Planilha gerada com sucesso: Melhores_PCs_2024.xlsx")
+    return dados
 
 if __name__ == "__main__":
-    criar_planilha()
+    print(buscar_todos())

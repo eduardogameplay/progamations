@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Neon - Versão Definitiva</title>
+    
+    <style>
+        /* CSS COMPLETO E INTEGRADO */
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            background-color: #111;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #00ffde;
+        }
+
+        h1, .placar {
+            text-shadow: 0 0 5px #00ffde, 0 0 10px #00ffde;
+        }
+        
+        .placar {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .botoes-dificuldade {
+            margin-bottom: 15px;
+        }
+
+        .botoes-dificuldade button {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: transparent;
+            border: 2px solid #ff00ff;
+            color: #ff00ff;
+            padding: 5px 15px;
+            font-size: 1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s ease-in-out;
+            margin: 0 5px;
+        }
+
+        .botoes-dificuldade button:hover {
+            background-color: #ff00ff;
+            color: #111;
+            box-shadow: 0 0 10px #ff00ff;
+        }
+
+        .botoes-dificuldade button.ativo {
+            background-color: #ff00ff;
+            color: #111;
+            box-shadow: 0 0 15px #ff00ff;
+        }
+
+        #area-jogo {
+            position: relative;
+            width: 800px;
+            height: 400px;
+            background-color: #000;
+            border: 3px solid #00ffde;
+            box-shadow: 0 0 15px #00ffde;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        .raquete, #bola {
+            background-color: #ff00ff;
+            box-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff;
+            position: absolute;
+        }
+        
+        .raquete { width: 15px; height: 80px; }
+        #raquete-jogador { left: 10px; top: 160px; }
+        #raquete-computador { right: 10px; top: 160px; }
+        #bola { width: 15px; height: 15px; border-radius: 50%; left: 392.5px; top: 192.5px; }
+
+        .linha-central {
+            position: absolute; left: 50%; top: 0; height: 100%;
+            border-left: 2px dashed #00ffde;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <h1>Pong Neon</h1>
+    
+    <div class="placar">
+        <span id="placar-jogador">0</span>
+        <span>-</span>
+        <span id="placar-computador">0</span>
+    </div>
+
+    <div class="botoes-dificuldade">
+        <button id="btn-facil">Fácil</button>
+        <button id="btn-medio" class="ativo">Médio</button>
+        <button id="btn-dificil">Difícil</button>
+    </div>
+
+    <div id="area-jogo">
+        <div id="raquete-jogador" class="raquete"></div>
+        <div id="bola"></div>
+        <div id="raquete-computador" class="raquete"></div>
+        <div class="linha-central"></div>
+    </div>
+
+    <script>
+        // JAVASCRIPT COMPLETO E INTEGRADO
+        const areaJogo = document.getElementById('area-jogo');
+        const raqueteJogador = document.getElementById('raquete-jogador');
+        const raqueteComputador = document.getElementById('raquete-computador');
+        const bola = document.getElementById('bola');
+        const placarJogadorEl = document.getElementById('placar-jogador');
+        const placarComputadorEl = document.getElementById('placar-computador');
+
+        const btnFacil = document.getElementById('btn-facil');
+        const btnMedio = document.getElementById('btn-medio');
+        const btnDificil = document.getElementById('btn-dificil');
+        const todosBotoes = [btnFacil, btnMedio, btnDificil];
+
+        let placarJogador = 0, placarComputador = 0;
+        let bolaX = 392.5, bolaY = 192.5;
+        let velocidadeBolaX = 5, velocidadeBolaY = 5;
+        let raqueteComputadorY = 160;
+        let dificuldade = 'medio'; 
+
+        const configDificuldade = {
+            facil: { velocidade: 3, erro: 0.3 },
+            medio: { velocidade: 4.5, erro: 0.15 },
+            dificil: { velocidade: 6, erro: 0.05 }
+        };
+
+        const alturaAreaJogo = areaJogo.clientHeight;
+        const alturaRaquete = raqueteJogador.clientHeight;
+
+        function defineDificuldade(novaDificuldade, botaoClicado) {
+            dificuldade = novaDificuldade;
+            todosBotoes.forEach(btn => btn.classList.remove('ativo'));
+            botaoClicado.classList.add('ativo');
+        }
+
+        btnFacil.addEventListener('click', () => defineDificuldade('facil', btnFacil));
+        btnMedio.addEventListener('click', () => defineDificuldade('medio', btnMedio));
+        btnDificil.addEventListener('click', () => defineDificuldade('dificil', btnDificil));
+
+        areaJogo.addEventListener('mousemove', (e) => {
+            let p = e.clientY - areaJogo.getBoundingClientRect().top - (alturaRaquete/2);
+            if (p < 0) p = 0;
+            if (p > alturaAreaJogo-alturaRaquete) p = alturaAreaJogo-alturaRaquete;
+            raqueteJogador.style.top = `${p}px`;
+        });
+        
+        function moverBola() {
+            bolaX += velocidadeBolaX;
+            bolaY += velocidadeBolaY;
+            if (bolaY<=0 || bolaY>=alturaAreaJogo-bola.clientHeight) velocidadeBolaY = -velocidadeBolaY;
+            if (bolaX<=raqueteJogador.offsetLeft+raqueteJogador.clientWidth && bolaX>raqueteJogador.offsetLeft && bolaY+bola.clientHeight>=raqueteJogador.offsetTop && bolaY<=raqueteJogador.offsetTop+alturaRaquete) velocidadeBolaX=-velocidadeBolaX;
+            if (bolaX+bola.clientWidth>=raqueteComputador.offsetLeft && bolaX+bola.clientWidth<raqueteComputador.offsetLeft+raqueteComputador.clientWidth && bolaY+bola.clientHeight>=raqueteComputador.offsetTop && bolaY<=raqueteComputador.offsetTop+raqueteComputador.clientHeight) velocidadeBolaX=-velocidadeBolaX;
+            if (bolaX<0) { placarComputador++; placarComputadorEl.textContent=placarComputador; reiniciarBola(); }
+            if (bolaX>areaJogo.clientWidth) { placarJogador++; placarJogadorEl.textContent=placarJogador; reiniciarBola(); }
+            bola.style.left=`${bolaX}px`; bola.style.top=`${bolaY}px`;
+        }
+        
+        function moverRaqueteComputador() {
+            const s=configDificuldade[dificuldade]; if(Math.random()<s.erro)return;
+            const c=raqueteComputadorY+alturaRaquete/2;
+            if(c<bolaY)raqueteComputadorY+=s.velocidade; else if(c>bolaY)raqueteComputadorY-=s.velocidade;
+            if(raqueteComputadorY<0)raqueteComputadorY=0; if(raqueteComputadorY>alturaAreaJogo-alturaRaquete)raqueteComputadorY=alturaAreaJogo-alturaRaquete;
+            raqueteComputador.style.top=`${raqueteComputadorY}px`;
+        }
+
+        function reiniciarBola() {
+            bolaX = areaJogo.clientWidth/2 - bola.clientWidth/2;
+            bolaY = alturaAreaJogo/2 - bola.clientHeight/2;
+            velocidadeBolaX = -velocidadeBolaX;
+        }
+
+        function loopJogo() {
+            moverBola();
+            moverRaqueteComputador();
+            requestAnimationFrame(loopJogo);
+        }
+
+        loopJogo();
+    </script>
+</body>
+</html>

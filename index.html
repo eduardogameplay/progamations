@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo de Tênis (Pong)</title>
     <style>
-        /* --- CÓDIGO CSS --- */
+        
         body {
             font-family: 'Courier New', Courier, monospace;
             text-align: center;
@@ -33,24 +33,24 @@
             height: 400px;
             border: 2px solid #333;
             background-color: #000;
-            overflow: hidden; /* Garante que nada saia da área */
+            overflow: hidden; 
         }
 
         .raquete {
             position: absolute;
             width: 15px;
             height: 80px;
-            background-color: #fff; /* Cor branca, bem visível no fundo preto */
+            background-color: #fff; 
         }
 
         #raquete-jogador {
             left: 10px;
-            top: 160px; /* Posição inicial */
+            top: 160px; 
         }
 
         #raquete-computador {
             right: 10px;
-            top: 160px; /* Posição inicial */
+            top: 160px;
         }
 
         #bola {
@@ -59,8 +59,8 @@
             height: 15px;
             background-color: #fff;
             border-radius: 50%;
-            left: 392.5px; /* Posição inicial no centro */
-            top: 192.5px;  /* Posição inicial no centro */
+            left: 392.5px; 
+            top: 192.5px;  
         }
 
         .linha-central {
@@ -88,7 +88,7 @@
     </div>
 
     <script>
-        // --- CÓDIGO JAVASCRIPT ---
+      
         const areaJogo = document.getElementById('area-jogo');
         const raqueteJogador = document.getElementById('raquete-jogador');
         const raqueteComputador = document.getElementById('raquete-computador');
@@ -99,7 +99,7 @@
         let placarJogador = 0;
         let placarComputador = 0;
 
-        // Variáveis para as posições
+      
         let bolaX = 392.5;
         let bolaY = 192.5;
         let velocidadeBolaX = 4;
@@ -111,12 +111,12 @@
         const alturaAreaJogo = areaJogo.clientHeight;
         const alturaRaquete = raqueteJogador.clientHeight;
 
-        // Mover a raquete do jogador com o mouse
+       
         areaJogo.addEventListener('mousemove', (e) => {
-            // Pega a posição Y do mouse relativa à área do jogo
+          
             let posicaoMouseY = e.clientY - areaJogo.getBoundingClientRect().top - (alturaRaquete / 2);
 
-            // Limitar o movimento da raquete dentro da área de jogo
+          
             if (posicaoMouseY < 0) {
                 posicaoMouseY = 0;
             }
@@ -131,12 +131,10 @@
             bolaX += velocidadeBolaX;
             bolaY += velocidadeBolaY;
 
-            // Colisão com as paredes superior e inferior
             if (bolaY <= 0 || bolaY >= alturaAreaJogo - bola.clientHeight) {
                 velocidadeBolaY = -velocidadeBolaY;
             }
 
-            // Colisão com a raquete do jogador
             if (
                 bolaX <= raqueteJogador.offsetLeft + raqueteJogador.clientWidth &&
                 bolaX > raqueteJogador.offsetLeft &&
@@ -146,7 +144,6 @@
                 velocidadeBolaX = -velocidadeBolaX;
             }
 
-            // Colisão com a raquete do computador
             if (
                 bolaX + bola.clientWidth >= raqueteComputador.offsetLeft &&
                 bolaX + bola.clientWidth < raqueteComputador.offsetLeft + raqueteComputador.clientWidth &&
@@ -156,14 +153,14 @@
                 velocidadeBolaX = -velocidadeBolaX;
             }
 
-            // Ponto para o computador (bola passa pela esquerda)
+           
             if (bolaX < 0) {
                 placarComputador++;
                 placarComputadorEl.textContent = placarComputador;
                 reiniciarBola();
             }
 
-            // Ponto para o jogador (bola passa pela direita)
+            
             if (bolaX > areaJogo.clientWidth) {
                 placarJogador++;
                 placarJogadorEl.textContent = placarJogador;
@@ -177,14 +174,12 @@
         function moverRaqueteComputador() {
             const centroRaqueteComputador = raqueteComputadorY + alturaRaquete / 2;
             
-            // Move a raquete do computador em direção à bola
             if (centroRaqueteComputador < bolaY) {
                 raqueteComputadorY += velocidadeRaqueteComputador;
             } else if (centroRaqueteComputador > bolaY) {
                 raqueteComputadorY -= velocidadeRaqueteComputador;
             }
 
-            // Limitar o movimento da raquete dentro da área de jogo
             if (raqueteComputadorY < 0) {
                 raqueteComputadorY = 0;
             }
@@ -198,17 +193,17 @@
         function reiniciarBola() {
             bolaX = areaJogo.clientWidth / 2 - bola.clientWidth / 2;
             bolaY = alturaAreaJogo / 2 - bola.clientHeight / 2;
-            // Inverte a direção para o outro jogador começar
+           
             velocidadeBolaX = -velocidadeBolaX; 
         }
 
         function loopJogo() {
             moverBola();
             moverRaqueteComputador();
-            requestAnimationFrame(loopJogo); // Cria um loop suave
+            requestAnimationFrame(loopJogo); 
         }
 
-        // Inicia o jogo
+       
         loopJogo();
     </script>
 </body>

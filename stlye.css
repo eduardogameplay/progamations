@@ -1,46 +1,117 @@
-
+/* --- 1. ESTILOS GERAIS DA PÁGINA --- */
 body {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Courier New', Courier, monospace; /* Fonte com estilo retrô/tech */
     text-align: center;
-    background-color: #111; /
+    background-color: #111; /* Fundo preto fosco */
     margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    color: #00ffde; 
+    height: 100vh; /* Faz a página ocupar a altura inteira da tela */
+    color: #00ffde; /* Cor do texto principal (ciano/turquesa) */
 }
 
-
+/* Estilo para o título e o placar com efeito de brilho */
 h1, .placar {
     text-shadow: 0 0 5px #00ffde, 0 0 10px #00ffde;
 }
 
+/* Estilo específico do placar */
+.placar {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
 
+
+/* --- 2. BOTÕES DE DIFICULDADE --- */
+.botoes-dificuldade {
+    margin-bottom: 15px; /* Espaço entre os botões e a área do jogo */
+}
+
+/* Estilo base para todos os botões */
+.botoes-dificuldade button {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: transparent; /* Fundo transparente */
+    border: 2px solid #ff00ff; /* Borda rosa/magenta */
+    color: #ff00ff; /* Cor do texto rosa/magenta */
+    padding: 5px 15px;
+    font-size: 1em;
+    cursor: pointer; /* Muda o cursor para uma "mãozinha" */
+    text-transform: uppercase; /* Deixa o texto em maiúsculas */
+    transition: all 0.2s ease-in-out; /* Animação suave */
+    margin: 0 5px;
+}
+
+/* Efeito quando o mouse passa por cima do botão */
+.botoes-dificuldade button:hover {
+    background-color: #ff00ff;
+    color: #111; /* Texto fica preto */
+    box-shadow: 0 0 10px #ff00ff; /* Adiciona um brilho */
+}
+
+/* Estilo para o botão que está selecionado (ativo) */
+.botoes-dificuldade button.ativo {
+    background-color: #ff00ff;
+    color: #111;
+    box-shadow: 0 0 15px #ff00ff;
+}
+
+
+/* --- 3. ÁREA E ELEMENTOS DO JOGO --- */
+
+/* A "quadra" do jogo */
 #area-jogo {
-    position: relative;
+    position: relative; /* Essencial para posicionar os elementos internos */
     width: 800px;
     height: 400px;
-    background-color: #000;
-    border: 3px solid #00ffde;
-    box-shadow: 0 0 15px #00ffde;
-    overflow: hidden;
+    background-color: #000; /* Fundo preto */
+    border: 3px solid #00ffde; /* Borda ciano/turquesa */
+    box-shadow: 0 0 15px #00ffde; /* Efeito de brilho na borda */
+    overflow: hidden; /* Garante que a bola não "vaze" para fora */
+    cursor: none; /* Esconde o cursor do mouse dentro do jogo */
 }
 
-
+/* Estilo comum para as raquetes e a bola */
 .raquete, #bola {
-    background-color: #ff00ff; 
-    box-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff;
+    background-color: #ff00ff; /* Cor rosa/magenta */
+    box-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff; /* Efeito de brilho */
+    position: absolute; /* Permite o controle exato da posição com JS */
 }
 
+/* Tamanho das raquetes */
+.raquete {
+    width: 15px;
+    height: 80px;
+}
+
+/* Posição inicial da raquete do jogador */
+#raquete-jogador {
+    left: 10px;
+    top: 160px;
+}
+
+/* Posição inicial da raquete do computador */
+#raquete-computador {
+    right: 10px;
+    top: 160px;
+}
+
+/* Estilo e tamanho da bola */
+#bola {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%; /* Deixa o elemento perfeitamente redondo */
+    left: 392.5px; /* Posição inicial no centro horizontal */
+    top: 192.5px;  /* Posição inicial no centro vertical */
+}
+
+/* A linha tracejada no meio da quadra */
 .linha-central {
-    border-left: 2px dashed #00ffde;
-   
     position: absolute;
     left: 50%;
     top: 0;
     height: 100%;
-    transform: translateX(-50%);
-}
+    border-left: 2px dashed #00ffde;
+    transform: translateX(-50%); /* Truque para centralizar a linha perfeitamente */
 }

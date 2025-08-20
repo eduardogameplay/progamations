@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pong Neon - Versão Final</title>
+    <title>Pong Neon - Versão Corrigida</title>
     
     <style>
         body {
@@ -36,7 +36,7 @@
             border: 3px solid #00ffde;
             box-shadow: 0 0 15px #00ffde;
             overflow: hidden;
-            cursor: none; 
+            cursor: none;
         }
 
         .raquete, #bola {
@@ -93,6 +93,7 @@
     </div>
 
     <script>
+        // Selecionando os elementos do jogo
         const areaJogo = document.getElementById('area-jogo');
         const raqueteJogador = document.getElementById('raquete-jogador');
         const raqueteComputador = document.getElementById('raquete-computador');
@@ -100,41 +101,30 @@
         const placarJogadorEl = document.getElementById('placar-jogador');
         const placarComputadorEl = document.getElementById('placar-computador');
 
+        // Variáveis de estado do jogo
         let placarJogador = 0;
         let placarComputador = 0;
-        
         let bolaX = 392.5;
         let bolaY = 192.5;
         let velocidadeBolaX = 5;
         let velocidadeBolaY = 5;
+        let raqueteComputadorY = 160;
 
-        
+        // --- CONFIGURAÇÃO DA INTELIGÊNCIA ARTIFICIAL ---
+        let dificuldade = 'facil'; // Opções: 'facil', 'media', 'dificil'
 
-        
-        
-       
-        let dificuldade = 'facil';
-
-       
         const configDificuldade = {
-            facil: {
-                velocidade: 3,    
-                erro: 0.3         
-            },
-            media: {
-                velocidade: 4.5, 
-                erro: 0.15        
-            },
-            dificil: {
-                velocidade: 6,   
-                erro: 0.05       
-            }
+            facil: { velocidade: 3, erro: 0.3 },
+            media: { velocidade: 4.5, erro: 0.15 },
+            dificil: { velocidade: 6, erro: 0.05 }
         };
 
-        let raqueteComputadorY = 160;
         const alturaAreaJogo = areaJogo.clientHeight;
         const alturaRaquete = raqueteJogador.clientHeight;
 
+        // --- FUNÇÕES DO JOGO ---
+
+        // Move a raquete do jogador seguindo o mouse
         areaJogo.addEventListener('mousemove', (e) => {
             let posicaoMouseY = e.clientY - areaJogo.getBoundingClientRect().top - (alturaRaquete / 2);
             if (posicaoMouseY < 0) posicaoMouseY = 0;
@@ -142,6 +132,7 @@
             raqueteJogador.style.top = `${posicaoMouseY}px`;
         });
 
+        // Atualiza a posição da bola e checa colisões
         function moverBola() {
             bolaX += velocidadeBolaX;
             bolaY += velocidadeBolaY;
@@ -150,17 +141,14 @@
                 velocidadeBolaY = -velocidadeBolaY;
             }
 
-           
             if (bolaX <= raqueteJogador.offsetLeft + raqueteJogador.clientWidth && bolaX > raqueteJogador.offsetLeft && bolaY + bola.clientHeight >= raqueteJogador.offsetTop && bolaY <= raqueteJogador.offsetTop + alturaRaquete) {
                 velocidadeBolaX = -velocidadeBolaX;
             }
 
-           
             if (bolaX + bola.clientWidth >= raqueteComputador.offsetLeft && bolaX + bola.clientWidth < raqueteComputador.offsetLeft + raqueteComputador.clientWidth && bolaY + bola.clientHeight >= raqueteComputador.offsetTop && bolaY <= raqueteComputador.offsetTop + raqueteComputador.clientHeight) {
                 velocidadeBolaX = -velocidadeBolaX;
             }
 
-            // Marcação de pontos
             if (bolaX < 0) {
                 placarComputador++;
                 placarComputadorEl.textContent = placarComputador;
@@ -177,12 +165,13 @@
             bola.style.top = `${bolaY}px`;
         }
 
-        // Função da IA
+        // Move a raquete do computador (IA)
         function moverRaqueteComputador() {
             const settings = configDificuldade[dificuldade];
             
             if (Math.random() < settings.erro) {
                 return; 
+            }
 
             const centroRaqueteComputador = raqueteComputadorY + alturaRaquete / 2;
             
@@ -198,19 +187,23 @@
             raqueteComputador.style.top = `${raqueteComputadorY}px`;
         }
 
+        // Reinicia a bola no centro após um ponto
         function reiniciarBola() {
             bolaX = areaJogo.clientWidth / 2 - bola.clientWidth / 2;
             bolaY = alturaAreaJogo / 2 - bola.clientHeight / 2;
             velocidadeBolaX = -velocidadeBolaX;
         }
 
+        // O loop principal do jogo que anima tudo
         function loopJogo() {
             moverBola();
             moverRaqueteComputador();
             requestAnimationFrame(loopJogo);
         }
 
+        // --- INICIAR O JOGO ---
         loopJogo();
+
     </script>
 </body>
 </html>
